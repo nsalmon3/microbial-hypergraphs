@@ -62,7 +62,7 @@ class HyperCorrelation:
         # The information on what computations for a particular hypercorrelation will be stored in the log sheet
         logs = None
         if Path.exists(cache_file_path):
-            LOGGER.info("Checking cached hypercorrelation results.")
+            LOGGER.debug("Checking cached hypercorrelation results.")
             logs = pd.read_excel(cache_file_path, sheet_name="logs", index_col=0)
 
             if len(logs.loc[logs["group_size"] == group_size]) > 0:
@@ -74,7 +74,7 @@ class HyperCorrelation:
 
             if min_threshold_for_this_group_size <= threshold:
                 # This means that we must have already computed for this particular hypercorrelation
-                LOGGER.info(
+                LOGGER.debug(
                     "Cached results already contain equal or lower hypercorrelations (%f) than threshold, using cached result.",
                     min_threshold_for_this_group_size,
                 )
@@ -85,7 +85,7 @@ class HyperCorrelation:
                 )
                 return _df.loc[_df["Hypercorrelation"] >= threshold].copy()
             else:
-                LOGGER.info(
+                LOGGER.debug(
                     "Minimal hypercorrelation found in cached results was %f, but passed threshold is %f, will not use cached hypercorrelation.",
                     min_threshold_for_this_group_size,
                     threshold,
@@ -142,7 +142,7 @@ class HyperCorrelation:
             with pd.ExcelWriter(cache_file_path, mode="a") as writer:
                 new_log.to_excel(writer, sheet_name="logs")
 
-        LOGGER.info("Successfully cached result to %s", cache_file_path)
+        LOGGER.debug("Successfully cached result to %s", cache_file_path)
 
         return return_value
 
@@ -192,7 +192,7 @@ def _minimal_hypercorrelator(
         for pair in combinations(group, 2):
             _min = min(_min, correlation_df.loc[pair[0], pair[1]])
         if _min >= threshold:
-            _df.loc[group] = _min
+            _df.loc[group, "Hypercorrelation"] = _min
 
     return _df
 

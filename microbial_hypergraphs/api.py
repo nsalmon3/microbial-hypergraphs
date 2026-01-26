@@ -18,6 +18,7 @@ from microbial_hypergraphs.hypercorrelation import (
     HYPERCORRELATION_INSTANCES,
     HypercorrelationNameNotFoundException,
 )
+from microbial_hypergraphs.hypergraph import Hypernetwork
 from microbial_hypergraphs.core import CONSOLE
 
 
@@ -40,6 +41,29 @@ def hypercorrelate(
         group_size=group_size,
         population=POPULATION_INSTANCES[population_name],
         correlation=CORRELATION_INSTANCES[correlation_name],
+    )
+
+
+def get_hypernetwork(
+    population_name: str,
+    correlation_name: str,
+    hypercorrelation_name: str,
+    max_group_size: int,
+    threshold: float,
+) -> Hypernetwork:
+    if hypercorrelation_name not in HYPERCORRELATION_INSTANCES:
+        raise HypercorrelationNameNotFoundException(hypercorrelation_name)
+    if population_name not in POPULATION_INSTANCES:
+        raise PopulationNameNotFoundException(population_name)
+    if correlation_name not in CORRELATION_INSTANCES:
+        raise CorrelationNameNotFoundException(correlation_name)
+
+    return Hypernetwork(
+        population=POPULATION_INSTANCES[population_name],
+        correlation=CORRELATION_INSTANCES[correlation_name],
+        hypercorrelation=HYPERCORRELATION_INSTANCES[hypercorrelation_name],
+        max_group_size=max_group_size,
+        threshold=threshold,
     )
 
 
