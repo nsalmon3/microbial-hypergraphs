@@ -18,11 +18,15 @@ python --version
 echo.
 echo Creating virtual environment in .venv ...
 
-python -m venv .venv
-if %errorlevel% neq 0 (
-    echo.
-    echo ERROR: Failed to create virtual environment.
-    exit /b 1
+if not exist .venv (
+    python -m venv .venv
+    if %errorlevel% neq 0 (
+        echo.
+        echo ERROR: Failed to create virtual environment.
+        exit /b 1
+    )
+) else (
+    echo Virtual environment already exists. Skipping creation.
 )
 
 echo.
@@ -38,10 +42,18 @@ if %errorlevel% neq 0 (
 echo.
 if exist requirements.txt (
     echo Installing dependencies from requirements.txt...
-    pip install --upgrade pip
+    python -m pip install --upgrade pip
     pip install -r requirements.txt
 ) else (
     echo No requirements.txt found. Skipping dependency installation.
+)
+
+if not exist .venv\Lib\site-packages\microbial_hypergraphs.pth (
+    echo.
+    echo Adding microbial_hypergraphs package .pth file to virtual environment...
+    echo %cd% > .venv\Lib\site-packages\microbial_hypergraphs.pth
+) else (
+    echo microbial_hypergraphs package path already added to virtual environment. Skipping.
 )
 
 call .venv\Scripts\deactivate.bat
